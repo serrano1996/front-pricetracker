@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>PriceTracker</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <script>
+      // Same rule as Theme in theme.ts, applied before Angular boots so a dark page never flashes light
+      try {
+        const saved = JSON.parse(localStorage.getItem('pt.theme'));
+        const dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', dark);
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
+</html>

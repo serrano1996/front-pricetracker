@@ -1,0 +1,41 @@
+<header class="border-b border-slate-200 bg-surface">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-3">
+    <a routerLink="/" class="text-xl">
+      <app-logo />
+    </a>
+    <nav class="flex items-center gap-2">
+      <a routerLink="/list" routerLinkActive #list="routerLinkActive" ariaCurrentWhenActive="page"
+         class="relative rounded-full p-1.5"
+         [class]="list.isActive ? 'bg-emerald-100 text-emerald-800 ring-1 ring-emerald-600' : 'text-slate-700 hover:bg-slate-100'"
+         [attr.aria-label]="i18n.t('nav.list') + ', ' + i18n.t('nav.items', { n: basket.items().length })"
+         [title]="i18n.t('nav.list')">
+        <app-icon name="cart" class="block size-5" />
+        @if (basket.items().length) {
+          <span class="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-700 px-1 text-[10px] font-semibold text-white" aria-hidden="true">
+            {{ basket.items().length }}
+          </span>
+        }
+      </a>
+      <button type="button" class="rounded-full p-1.5 text-slate-600 hover:bg-slate-100"
+              [attr.aria-label]="i18n.t(theme.current() === 'dark' ? 'nav.toLight' : 'nav.toDark')"
+              [title]="i18n.t(theme.current() === 'dark' ? 'nav.toLight' : 'nav.toDark')" (click)="theme.toggle()">
+        <app-icon [name]="theme.current() === 'dark' ? 'sun' : 'moon'" />
+      </button>
+      <app-icon name="globe" class="text-slate-500" />
+      <div role="group" [attr.aria-label]="i18n.t('nav.language')" class="flex overflow-hidden rounded-md border border-slate-300 text-xs font-medium">
+        @for (l of languages; track l) {
+          <button type="button" class="px-2 py-1 uppercase" [attr.aria-pressed]="i18n.lang() === l"
+                  [class.bg-emerald-700]="i18n.lang() === l" [class.text-white]="i18n.lang() === l"
+                  [class.text-slate-600]="i18n.lang() !== l" (click)="i18n.lang.set(l)">{{ l }}</button>
+        }
+      </div>
+    </nav>
+  </div>
+</header>
+<main class="mx-auto max-w-6xl px-4 py-6">
+  <router-outlet />
+</main>
+<footer class="space-y-1 py-6 text-center text-xs text-slate-500">
+  <p>{{ i18n.t('footer.developedBy') }} <span class="font-semibold text-slate-700">rssoft</span></p>
+  <p>{{ i18n.t('footer.geonames') }} <a href="https://www.geonames.org/" class="underline">GeoNames</a> (CC BY 4.0)</p>
+</footer>
