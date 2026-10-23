@@ -1,10 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { HistoryProduct, PriceHistoryResponse, SearchResponse } from './models';
 
-// shortcut: hardcoded backend URL, move to environment files when deploying
-const API_URL = 'http://localhost:8080/api/v1';
+const API_URL = environment.apiUrl;
 
 @Injectable({ providedIn: 'root' })
 export class PriceTrackerApi {
