@@ -212,6 +212,38 @@ const ES: Record<Key, string> = {
 };
 
 const MESSAGES: Record<Lang, Record<Key, string>> = { en: EN, es: ES };
+
+/** Geeky lines shown in turn while a search loads, so slow scrapers are less boring */
+const LOADING_LINES: Record<Lang, string[]> = {
+  en: [
+    'Waking up the scrapers… some sleep more than a Snorlax.',
+    'Computing the answer to life, the universe and the price of milk… 42.',
+    'May the deals be with you.',
+    'Reticulating price splines…',
+    'Taking the red pill: real prices incoming.',
+    'One ring to rule them all… and one store to save money.',
+    'Running git blame on inflation…',
+    'Beam me up, Scotty: teleporting shopping carts.',
+    'Dodging captchas like Neo dodges bullets…',
+    'Faster than the Millennium Falcon… almost.',
+    'Asking Stack Overflow how much tomatoes cost…',
+    "It's not a bug, it's a slow supermarket.",
+  ],
+  es: [
+    'Despertando a los scrapers… algunos duermen más que un Snorlax.',
+    'Calculando la respuesta a la vida, el universo y el precio de la leche… 42.',
+    'Que la oferta te acompañe.',
+    'Reticulando splines de precios…',
+    'Tomando la pastilla roja: llegan los precios reales.',
+    'Un anillo para gobernarlos a todos… y un súper para ahorrar.',
+    'Haciendo git blame a la inflación…',
+    'Teletranspórtame, Scotty: moviendo carritos de la compra.',
+    'Esquivando captchas como Neo esquiva balas…',
+    'Más rápido que el Halcón Milenario… casi.',
+    'Preguntando en Stack Overflow cuánto valen los tomates…',
+    'No es un bug, es un súper que va lento.',
+  ],
+};
 const KEY = 'pt.lang';
 
 /** The browser's language when it is Spanish, else English */
@@ -234,6 +266,9 @@ export class I18n {
       document.documentElement.lang = this.lang();
     });
   }
+
+  /** Lines to entertain a slow search, in the current language */
+  readonly loadingLines = computed(() => LOADING_LINES[this.lang()]);
 
   /** Euros in the current language: "€4.86" or "4,86 €" */
   readonly money = (value: number): string => formatCurrency(value, this.locale(), '€', 'EUR');

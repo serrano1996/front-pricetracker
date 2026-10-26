@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, linkedSignal, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
@@ -14,6 +14,7 @@ import { Place, Places } from '../data/places';
 import { cheapestPerUnit, compareOffers, SortBy, sortProducts } from '../domain/offers';
 
 const POSTAL_CODE_KEY = 'pt.postal_code';
+const LOADING_LINE_MS = 3000;
 const STORES_KEY = 'pt.stores';
 
 @Component({
@@ -122,6 +123,10 @@ const STORES_KEY = 'pt.stores';
     </section>
 
     @if (results.isLoading()) {
+      <!-- Hidden from screen readers: a new line every few seconds would be noise; the status below says "Searching" -->
+      <p class="mb-4 flex items-center justify-center gap-2 text-center text-sm text-slate-500" aria-hidden="true">
+        <app-icon name="refresh" class="animate-spin text-emerald-600" />{{ i18n.loadingLines()[loadingLine() % i18n.loadingLines().length] }}
+      </p>
       <div class="grid gap-4 md:grid-cols-3" role="status" [attr.aria-label]="i18n.t('search.searching')">
         <span class="sr-only">{{ i18n.t('search.searching') }}</span>
         @for (i of [1, 2, 3]; track i) { <div class="card h-48 animate-pulse bg-slate-100"></div> }
@@ -375,6 +380,15 @@ export class SearchPage {
   );
 
   readonly packSize = packSize;
+  /** Which geeky loading line shows: a random one first, then the next every few seconds while loading */
+  readonly loadingLine = signal(0);
+
+  private readonly rotateLoadingLines = effect((onCleanup) => {
+    if (!this.results.isLoading()) return;
+    this.loadingLine.set(Math.floor(Math.random() * this.i18n.loadingLines().length));
+    const timer = setInterval(() => this.loadingLine.update((i) => i + 1), LOADING_LINE_MS);
+    onCleanup(() => clearInterval(timer));
+  });
   /** Products shown per store until "Show all" */
   readonly previewSize = 6;
   /** Stores showing all their products; back to previews on every new search */
