@@ -75,7 +75,7 @@ const STORES_KEY = 'pt.stores';
             </ul>
           }
         </div>
-        <button [class]="landing() ? 'btn-primary size-12 shrink-0 self-center rounded-full p-0' : 'btn-primary m-1 rounded-xl px-3 py-2 sm:size-9 sm:rounded-full sm:p-0'"
+        <button [class]="landing() ? 'btn-primary h-12 w-full sm:w-12 sm:shrink-0 sm:self-center sm:rounded-full sm:p-0' : 'btn-primary m-1 rounded-xl px-3 py-2 sm:size-9 sm:rounded-full sm:p-0'"
                 [disabled]="results.isLoading()" [attr.aria-label]="i18n.t('search.submit')" [title]="i18n.t('search.submit')">
           <app-icon name="search" class="size-5" />
         </button>
@@ -133,7 +133,8 @@ const STORES_KEY = 'pt.stores';
         <h2 class="mb-3 flex items-center gap-2 text-lg font-semibold"><app-icon name="scale" class="size-5 text-emerald-700" />{{ i18n.t('search.comparison') }}</h2>
         <div class="mb-8 grid gap-3 md:grid-cols-2">
           @for (c of comparisons(); track c.type) {
-            <section class="card p-4">
+            <!-- min-w-0: a grid item may not shrink below its content otherwise, and long product names overflow on phones -->
+            <section class="card min-w-0 p-4">
               <div class="mb-3 flex items-start justify-between gap-2">
                 <h3 class="font-medium">
                   {{ c.type }}
@@ -150,8 +151,9 @@ const STORES_KEY = 'pt.stores';
               </div>
               <ol class="space-y-1">
                 @for (row of c.rows; track row.offer.product_id) {
-                  <li class="flex items-center gap-3 rounded-md px-2 py-1.5 text-sm" [class.bg-emerald-50]="row.best">
-                    <span class="flex w-24 shrink-0 items-center gap-1 capitalize" [class.font-semibold]="row.best" [class.text-emerald-800]="row.best">
+                  <!-- Phones: store and price on top, product and bar below at full width; wider: one row -->
+                  <li class="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 rounded-md px-2 py-1.5 text-sm sm:flex" [class.bg-emerald-50]="row.best">
+                    <span class="flex shrink-0 items-center gap-1 capitalize sm:w-24" [class.font-semibold]="row.best" [class.text-emerald-800]="row.best">
                       {{ row.offer.store }}
                       @if (references().get(row.offer.store); as ref) {
                         <span class="normal-case" [title]="i18n.t('search.ref', { place: ref })">
@@ -160,14 +162,14 @@ const STORES_KEY = 'pt.stores';
                         </span>
                       }
                     </span>
-                    <div class="min-w-0 flex-1">
+                    <div class="col-span-2 row-start-2 min-w-0 sm:flex-1">
                       <a class="link block truncate" [routerLink]="['/products', row.offer.product_id]" [title]="row.offer.name">{{ row.offer.name }}</a>
                       <!-- Unit price as a share of the dearest offer, to compare at a glance -->
                       <div class="mt-1 h-1.5 rounded-full bg-slate-100" aria-hidden="true">
                         <div class="h-full rounded-full" [class.bg-emerald-500]="row.best" [class.bg-slate-300]="!row.best" [style.width.%]="row.bar"></div>
                       </div>
                     </div>
-                    <div class="shrink-0 text-right tabular-nums">
+                    <div class="col-start-2 row-start-1 shrink-0 text-right tabular-nums">
                       <span [class.font-semibold]="row.best">{{ i18n.money(row.offer.unit_price) }}/{{ c.unit }}</span>
                       @if (row.best) {
                         <span class="badge block bg-emerald-100 text-emerald-800">{{ i18n.t(c.tie ? 'search.tie' : 'search.best') }}</span>
@@ -206,7 +208,7 @@ const STORES_KEY = 'pt.stores';
       </div>
       <div class="grid items-start gap-4 md:grid-cols-2 lg:grid-cols-3">
         @for (s of sortedStores(); track s.store) {
-          <section class="card rounded-xl p-4">
+          <section class="card min-w-0 rounded-xl p-4">
             <h3 class="flex items-center justify-between gap-2 border-b border-slate-200 pb-3 font-semibold capitalize">
               <span class="flex items-center gap-2"><span class="size-2 rounded-full bg-emerald-500" aria-hidden="true"></span>{{ s.store }}</span>
               @if (s.status === 'ok') {
