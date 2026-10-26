@@ -138,6 +138,44 @@ describe('SearchPage', () => {
     expect(navigate).toHaveBeenCalledWith([], { queryParams: { postal_code: '50500', stores: 'dia' }, replaceUrl: true });
   });
 
+  it('searching again for the same thing asks the backend again, so a store that failed gets retried', async () => {
+    const fixture = TestBed.createComponent(SearchPage);
+    fixture.componentRef.setInput('term', 'leche');
+    fixture.componentRef.setInput('postal_code', '28001');
+    fixture.detectChanges();
+    flushPlaces();
+    const http = TestBed.inject(HttpTestingController);
+    const unavailable = { store: 'dia', status: 'unavailable' as const, stale: false, fetched_at: null,
+      reference_postal_code: null, reference_distance_km: null, products: [] };
+    http.expectOne((r) => r.url.endsWith('/search')).flush({ term: 'leche', postal_code: '28001', comparison: [], stores: [unavailable] } satisfies SearchResponse);
+    await fixture.whenStable();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    fixture.componentInstance.submit('leche', '28001');
+    fixture.detectChanges();
+
+    http.expectOne((r) => r.url.endsWith('/search') && r.params.get('term') === 'leche');
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('the unavailable store offers to retry the search', async () => {
+    const fixture = TestBed.createComponent(SearchPage);
+    fixture.componentRef.setInput('term', 'leche');
+    fixture.componentRef.setInput('postal_code', '28001');
+    fixture.detectChanges();
+    flushPlaces();
+    const http = TestBed.inject(HttpTestingController);
+    const unavailable = { store: 'dia', status: 'unavailable' as const, stale: false, fetched_at: null,
+      reference_postal_code: null, reference_distance_km: null, products: [] };
+    http.expectOne((r) => r.url.endsWith('/search')).flush({ term: 'leche', postal_code: '28001', comparison: [], stores: [unavailable] } satisfies SearchResponse);
+    await fixture.whenStable();
+
+    [...(fixture.nativeElement as HTMLElement).querySelectorAll('button')].find((b) => b.textContent?.includes('Retry'))!.click();
+    fixture.detectChanges();
+
+    http.expectOne((r) => r.url.endsWith('/search'));
+  });
+
   it('remembers the postal code of a search', () => {
     const fixture = TestBed.createComponent(SearchPage);
     vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
