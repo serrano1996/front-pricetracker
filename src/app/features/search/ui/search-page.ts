@@ -219,7 +219,12 @@ const STORES_KEY = 'pt.stores';
             </h3>
             @switch (s.status) {
               @case ('not_served') { <p class="flex items-center gap-2 pt-3 text-sm text-slate-500"><app-icon name="ban" />{{ i18n.t('search.notServed') }}</p> }
-              @case ('unavailable') { <p class="flex items-center gap-2 pt-3 text-sm text-red-700"><app-icon name="alert" />{{ i18n.t('search.unavailable') }}</p> }
+              @case ('unavailable') {
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-3">
+                  <p class="flex items-center gap-2 text-sm text-red-700"><app-icon name="alert" />{{ i18n.t('search.unavailable') }}</p>
+                  <button type="button" class="btn-secondary gap-1.5" (click)="results.reload()"><app-icon name="refresh" class="size-3.5" />{{ i18n.t('search.retry') }}</button>
+                </div>
+              }
               @default {
                 @if (s.reference_postal_code || s.stale) {
                   <div class="space-y-2 pt-3">
@@ -467,6 +472,8 @@ export class SearchPage {
     this.invalidPlace.set(!/^\d{5}$/.test(postalCode));
     if (!term || this.invalidPlace()) return;
     save(POSTAL_CODE_KEY, postalCode);
-    this.router.navigate([], { queryParams: { term, postal_code: postalCode }, queryParamsHandling: 'merge' });
+    // Same search again: the URL would not change, so ask the backend again (it only retries stores without fresh data)
+    if (term === this.term() && postalCode === this.postal_code()) this.results.reload();
+    else this.router.navigate([], { queryParams: { term, postal_code: postalCode }, queryParamsHandling: 'merge' });
   }
 }
