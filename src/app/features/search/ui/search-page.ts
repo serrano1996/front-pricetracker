@@ -134,6 +134,7 @@ const STORES_KEY = 'pt.stores';
     } @else if (results.error()) {
       <p class="card flex items-center gap-2 border-red-200 bg-red-50 p-4 text-sm text-red-800" role="alert"><app-icon name="alert" />{{ error() }}</p>
     } @else if (results.value(); as r) {
+      <p class="mb-4 flex items-start gap-2 text-xs text-slate-500"><app-icon name="info" class="mt-px shrink-0" />{{ i18n.t('prices.indicative') }}</p>
       @if (r.comparison.length) {
         <h2 class="mb-3 flex items-center gap-2 text-lg font-semibold"><app-icon name="scale" class="size-5 text-emerald-700" />{{ i18n.t('search.comparison') }}</h2>
         <div class="mb-8 grid gap-3 md:grid-cols-2">

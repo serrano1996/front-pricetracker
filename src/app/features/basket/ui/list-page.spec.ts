@@ -51,6 +51,7 @@ describe('ListPage controls', () => {
     const el = fixture.nativeElement as HTMLElement;
 
     expect(el.textContent).toContain('It costs the same in any store: €1.00');
+    expect(el.textContent).toContain("Indicative prices from each supermarket's website");
     (el.querySelector('button[aria-label="More Leche"]') as HTMLButtonElement).click();
     expect(basket.items()[0].quantity).toBe(1.5);
 

@@ -120,6 +120,8 @@ const chunk = <T>(items: T[], size: number): T[][] =>
             <p class="notice flex items-center gap-2"><app-icon name="alert" />{{ i18n.t('list.noPlan') }}</p>
           }
 
+          <p class=" flex items-start gap-2 text-xs text-slate-500"><app-icon name="info" class="mt-px shrink-0" />{{ i18n.t('prices.indicative') }}</p>
+
           <div>
             <h3 class="mb-2 text-sm font-medium text-slate-500">{{ i18n.t('list.byStore') }}</h3>
             <ul class="space-y-2">
