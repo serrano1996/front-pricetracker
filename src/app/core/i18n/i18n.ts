@@ -15,6 +15,7 @@ const EN = {
   'nav.toLight': 'Switch to light theme',
   'footer.geonames': 'Postal code coordinates by',
   'footer.developedBy': 'Developed by',
+  'prices.indicative': "Indicative prices from each supermarket's website; they may differ in the physical store.",
 
   'search.title': 'Compare supermarket prices',
   'search.product': 'Product',
@@ -118,6 +119,7 @@ const ES: Record<Key, string> = {
   'nav.toLight': 'Cambiar a tema claro',
   'footer.geonames': 'Coordenadas de códigos postales de',
   'footer.developedBy': 'Desarrollado por',
+  'prices.indicative': 'Precios orientativos de la web de cada supermercado; en la tienda física pueden variar.',
 
   'search.title': 'Compara precios de supermercados',
   'search.product': 'Producto',

@@ -46,6 +46,7 @@ describe('SearchPage', () => {
     expect(text).toContain('Leche entera');
     expect(text).toContain('Leche Dia');
     expect(text).toContain('Does not deliver to this postal code.');
+    expect(text).toContain("Indicative prices from each supermarket's website");
     expect(text).toContain('Reference prices from Zaragoza (50001), ≈ 76 km away.');
     expect(text).toContain('ref. Zaragoza (50001)');
     // 0.99 → 0.89: a 0.10 € drop since 3 Oct
