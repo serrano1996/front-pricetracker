@@ -176,6 +176,33 @@ describe('SearchPage', () => {
     http.expectOne((r) => r.url.endsWith('/search'));
   });
 
+  it('entertains a slow search with geeky lines that change every few seconds, and drops them once loaded', async () => {
+    vi.useFakeTimers();
+    try {
+      const fixture = TestBed.createComponent(SearchPage);
+      fixture.componentRef.setInput('term', 'leche');
+      fixture.componentRef.setInput('postal_code', '28001');
+      fixture.detectChanges();
+      flushPlaces();
+      const lines = TestBed.inject(I18n).loadingLines();
+      const shown = () => lines.find((l) => (fixture.nativeElement as HTMLElement).textContent!.includes(l));
+
+      const first = shown();
+      expect(first).toBeDefined();
+      vi.advanceTimersByTime(3000);
+      fixture.detectChanges();
+      expect(shown()).not.toBe(first);
+
+      TestBed.inject(HttpTestingController).expectOne((r) => r.url.endsWith('/search'))
+        .flush({ term: 'leche', postal_code: '28001', comparison: [], stores: [] } satisfies SearchResponse);
+      await vi.advanceTimersByTimeAsync(0);
+      fixture.detectChanges();
+      expect(shown()).toBeUndefined();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('remembers the postal code of a search', () => {
     const fixture = TestBed.createComponent(SearchPage);
     vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
